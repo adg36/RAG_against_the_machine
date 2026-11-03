@@ -7,4 +7,6 @@ authors = [
 	{ name = "razevedo", email = "razevedo@student.42porto.com" }
 ]
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "fire>=0.7.1",
+]
