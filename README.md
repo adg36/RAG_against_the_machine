@@ -7,6 +7,15 @@
 ## Instructions
 
 ## Resources
+* Libraries
+https://docs.python.org/3/library/pathlib.html
+
+* Indexing
+https://www.meilisearch.com/blog/rag-indexing
+
+	- Chunking
+		- https://community.databricks.com/t5/technical-blog/the-ultimate-guide-to-chunking-strategies-for-rag-applications/ba-p/113089
+		- https://reference.langchain.com/
 
 ### System architecture
 
