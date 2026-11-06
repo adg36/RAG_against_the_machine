@@ -16,10 +16,12 @@ https://www.meilisearch.com/blog/rag-indexing
 	- Chunking
 		- https://community.databricks.com/t5/technical-blog/the-ultimate-guide-to-chunking-strategies-for-rag-applications/ba-p/113089
 		- https://reference.langchain.com/
+		- https://supermemory.ai/blog/building-code-chunk-ast-aware-code-chunking/
 
 ### System architecture
 
 ### Chunking strategy
+* Recursive chunking with LangChain
 
 ### Retrieval method
 
