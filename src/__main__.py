@@ -1,4 +1,7 @@
+from pathlib import Path
 import fire
+from langchain_core.documents import Document
+from .indexing import index
 
 
 # FIRE COMMANDS
@@ -20,7 +23,6 @@ def answer_dataset(student_search_results_path: str, save_directory: str) -> Non
 
 def evaluate(student_search_results_path: str, dataset_path: str) -> None:
     pass
-
 
 if __name__ == "__main__":
     try:

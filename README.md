@@ -18,6 +18,10 @@ https://www.meilisearch.com/blog/rag-indexing
 		- https://reference.langchain.com/
 		- https://supermemory.ai/blog/building-code-chunk-ast-aware-code-chunking/
 
+* Progress bars
+
+	- https://www.youtube.com/watch?v=LurXhBQHwHM - tqdm
+
 ### System architecture
 
 ### Chunking strategy

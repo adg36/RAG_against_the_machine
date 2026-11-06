@@ -1,4 +1,5 @@
 from pathlib import Path
+from tqdm import tqdm
 from langchain_core.documents import Document
 from .chunking import perform_doc_chunking
 
