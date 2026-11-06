@@ -8,20 +8,25 @@ corpus = Path("data/raw")
 
 def index(max_chunk_size: int) -> None:
 
+    if max_chunk_size <= 0:
+        raise ValueError("max_chunk_size must be greater than zero.")
+    elif max_chunk_size > 2000:
+        raise ValueError("max_chunk_size cannot be greater than 2000")
+
     py_count = 0
     md_count = 0
 
     collection: list[Document] = []
 
-    for file in corpus.rglob("*.py"):
-        code_text = file.read_text()
-        py_docs = perform_doc_chunking(code_text)
+    for file_contents in corpus.rglob("*.py"):
+        code_text = file_contents.read_text()
+        py_docs = perform_doc_chunking(code_text, "python", max_chunk_size)
         collection.extend(py_docs)
         py_count += 1
 
-    for file in corpus.rglob("*.md"):
-        md_text = file.read_text()
-        md_docs = perform_doc_chunking(md_text)
+    for file_contents in corpus.rglob("*.md"):
+        md_text = file_contents.read_text()
+        md_docs = perform_doc_chunking(md_text, "markdown", max_chunk_size)
         collection.extend(md_docs)
         md_count += 1
 
@@ -34,6 +39,7 @@ def index(max_chunk_size: int) -> None:
           f"Total Markdown files: {md_count}")
     print(f"Created collection of {len(collection)} documents")
     print(f"Length of the longest chunk is {largest_chunk_len}")
+    print(f"Example of one document: {collection[0]}")
 
 
 def perform_doc_chunking(
@@ -48,21 +54,21 @@ def perform_doc_chunking(
             language=Language.PYTHON,
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
-            add_start_index=True
+            add_start_index=add_start_index
         )
     elif language.lower() == "markdown":
         doc_splitter = RecursiveCharacterTextSplitter.from_language(
             language=Language.MARKDOWN,
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
-            add_start_index=True
+            add_start_index=add_start_index
         )
     else:
         doc_splitter = RecursiveCharacterTextSplitter(
             separators=["\nclass ", "\ndef ", "\n\n", "\n", " ", ""],
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
-            length_function=len
+            add_start_index=add_start_index
         )
 
     documents = doc_splitter.create_documents([file])
@@ -88,4 +94,7 @@ def evaluate(student_search_results_path: str, dataset_path: str) -> None:
     pass
 
 if __name__ == "__main__":
-    fire.Fire()
+    try:
+        fire.Fire()
+    except ValueError as e:
+        print(f"ERROR: {e}")
