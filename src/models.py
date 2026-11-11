@@ -1,4 +1,7 @@
-from pydantic import BaseModel
+import uuid
+from pydantic import BaseModel, Field
+from typing_extensions import List
+
 
 class MinimalSource(BaseModel):
 	file_path: str

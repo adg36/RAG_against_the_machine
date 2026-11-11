@@ -6,6 +6,14 @@ from .chunking import perform_doc_chunking
 
 corpus = Path("data/raw")
 
+def get_filepaths(corpus: Path) -> list[Path]:
+
+    all_filepaths: list[Path] = []
+    all_filepaths.extend(list(corpus.rglob("*.py")))
+    all_filepaths.extend(list(corpus.rglob("*.md")))
+
+    return all_filepaths
+
 
 def index(max_chunk_size: int) -> None:
 
@@ -17,32 +25,26 @@ def index(max_chunk_size: int) -> None:
     except TypeError:
         print("ERROR: max_chunk_size must be an integer between 1 and 2000.")
 
-    py_count = 0
-    md_count = 0
+    all_filepaths = get_filepaths(corpus)
 
     collection: list[Document] = []
 
-    for filepath in corpus.rglob("*.py"):
-        code_text = filepath.read_text()
-        py_docs = perform_doc_chunking(
-            code_text, filepath, "python", max_chunk_size)
-        collection.extend(py_docs)
-        py_count += 1
+    t = tqdm(total=len(all_filepaths), desc="Chunking", ncols=80, unit=" file")
 
-    for filepath in corpus.rglob("*.md"):
-        md_text = filepath.read_text()
-        md_docs = perform_doc_chunking(
-            md_text, filepath, "markdown", max_chunk_size)
-        collection.extend(md_docs)
-        md_count += 1
+    for filepath in all_filepaths:
+        text = filepath.read_text()
+        if filepath.name.endswith(".py"):
+            chunks = perform_doc_chunking(
+                text, filepath, "python", max_chunk_size)
+        elif filepath.name.endswith(".md"):
+            chunks = perform_doc_chunking(
+                text, filepath, "markdown", max_chunk_size)
+        else:
+            chunks = perform_doc_chunking(
+                text, filepath)
+        collection.extend(chunks)
+        t.update(1)
+    t.close()
 
-    largest_chunk_len = 0
-    for chunk in collection:
-        if len(chunk.page_content) > largest_chunk_len:
-            largest_chunk_len = len(chunk.page_content)
-
-    print(f"Total Python files: {py_count}\n"
-          f"Total Markdown files: {md_count}")
-    print(f"Created collection of {len(collection)} documents")
-    print(f"Length of the longest chunk is {largest_chunk_len}")
-    print(f"Example of one chunk: {collection[0]}. Chunk length: {len(collection[0].page_content)}")
+    # print(f"Created collection of {len(collection)} documents")
+    # print(f"Example of one chunk: {collection[0]}. Chunk length: {len(collection[0].page_content)}")

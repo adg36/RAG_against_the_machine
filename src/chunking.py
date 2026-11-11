@@ -39,13 +39,12 @@ def perform_doc_chunking(
     chunks = doc_splitter.create_documents([file_contents], [metadatas])
 
     get_end_index(chunks)
-    # print(f"Total chunks: {len(chunks)}")
-    # print(file_contents[chunks[5].metadata["start_index"]:chunks[5].metadata["excl_end_index"]] == chunks[5].page_content)
 
     return chunks
 
 
 def get_end_index(chunks: list[Document]) -> list[Document]:
+
     for chunk in chunks:
         excl_end_index = chunk.metadata["start_index"] + len(chunk.page_content)
         chunk.metadata["excl_end_index"] = excl_end_index
