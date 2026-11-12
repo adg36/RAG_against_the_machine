@@ -8,7 +8,10 @@
 
 ## Resources
 * Libraries
-https://docs.python.org/3/library/pathlib.html
+		- Pathlib: https://docs.python.org/3/library/pathlib.html
+		- Python Fire:
+		- Langchain
+		- BM25
 
 * Indexing
 https://www.meilisearch.com/blog/rag-indexing
