@@ -2,6 +2,7 @@ from pathlib import Path
 from tqdm import tqdm
 from langchain_core.documents import Document
 from .chunking import perform_doc_chunking
+from .tokenizer import tokenize
 
 
 corpus = Path("data/raw")
@@ -46,5 +47,7 @@ def index(max_chunk_size: int) -> None:
         t.update(1)
     t.close()
 
+    tokenize(collection)
+    print("Tokenization completed")
     # print(f"Created collection of {len(collection)} documents")
     # print(f"Example of one chunk: {collection[0]}. Chunk length: {len(collection[0].page_content)}")

@@ -1,11 +1,19 @@
-from pathlib import Path
 import fire
-from langchain_core.documents import Document
+import sys
 from .indexing import index
 
 
 # FIRE COMMANDS
 def search(query: str, k: int) -> None:
+    try:
+        if not query:
+            print("Empty query.")
+            sys.exit(1)
+        elif k <= 0:
+            print("k must be a positive integer.")
+            sys.exit(1)
+    except TypeError:
+        print("ERROR: k must be a positive integer.")
     print(f"Query: {query}\nk: {k}")
 
 
