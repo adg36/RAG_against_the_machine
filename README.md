@@ -22,6 +22,12 @@ https://www.meilisearch.com/blog/rag-indexing
 
 	- https://www.youtube.com/watch?v=LurXhBQHwHM - tqdm
 
+* Tokenizer
+	- https://www.w3schools.com/python/
+	- https://regexr.com/
+	- https://stackoverflow.com/questions/10182664/check-for-camel-case-in-python
+	- https://www.geeksforgeeks.org/python/python-split-camelcase-string-to-individual-strings/
+
 ### System architecture
 
 ### Chunking strategy
