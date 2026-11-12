@@ -1,5 +1,6 @@
 import fire
 import sys
+from typing_extensions import Any, Dict
 from .indexing import index
 
 
@@ -33,7 +34,16 @@ def evaluate(student_search_results_path: str, dataset_path: str) -> None:
     pass
 
 if __name__ == "__main__":
+    commands: Dict[str, Any] = {
+        "index": index,
+        "search": search,
+        "search_dataset": search_dataset,
+        "answer": answer,
+        "answer_dataset": answer_dataset,
+        "evaluate": evaluate
+    }
+
     try:
-        fire.Fire()
+        fire.Fire(component=commands)
     except (ValueError, TypeError) as e:
         print(f"ERROR: {e}")
