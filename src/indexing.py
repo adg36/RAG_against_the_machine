@@ -1,15 +1,16 @@
 from pathlib import Path
 from tqdm import tqdm
 from langchain_core.documents import Document
+from typing_extensions import List
 from .chunking import perform_doc_chunking
 from .tokenizer import tokenize
 
 
 corpus = Path("data/raw")
 
-def get_filepaths(corpus: Path) -> list[Path]:
+def get_filepaths(corpus: Path) -> List[Path]:
 
-    all_filepaths: list[Path] = []
+    all_filepaths: List[Path] = []
     all_filepaths.extend(list(corpus.rglob("*.py")))
     all_filepaths.extend(list(corpus.rglob("*.md")))
 
@@ -28,9 +29,9 @@ def index(max_chunk_size: int) -> None:
 
     all_filepaths = get_filepaths(corpus)
 
-    collection: list[Document] = []
+    collection: List[Document] = []
 
-    t = tqdm(total=len(all_filepaths), desc="Chunking", ncols=80, unit=" file")
+    t = tqdm(bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}", desc=f"{'Chunking:':<12}", total=len(all_filepaths), unit=" file")
 
     for filepath in all_filepaths:
         text = filepath.read_text()
@@ -47,7 +48,9 @@ def index(max_chunk_size: int) -> None:
         t.update(1)
     t.close()
 
-    tokenize(collection)
-    print("Tokenization completed")
+    tokenized_collection = tokenize(collection)
+
+    # bm25 = BM25Okapi(tokenized_collection)
+
     # print(f"Created collection of {len(collection)} documents")
     # print(f"Example of one chunk: {collection[0]}. Chunk length: {len(collection[0].page_content)}")

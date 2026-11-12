@@ -11,6 +11,7 @@
 		- Pathlib: https://docs.python.org/3/library/pathlib.html
 		- Python Fire:
 		- Langchain
+		- tqdm
 		- BM25
 
 * Indexing
@@ -20,6 +21,9 @@ https://www.meilisearch.com/blog/rag-indexing
 		- https://community.databricks.com/t5/technical-blog/the-ultimate-guide-to-chunking-strategies-for-rag-applications/ba-p/113089
 		- https://reference.langchain.com/
 		- https://supermemory.ai/blog/building-code-chunk-ast-aware-code-chunking/
+
+	- Lexical search
+		- https://huggingface.co/blog/xhluca/bm25s
 
 * Progress bars
 

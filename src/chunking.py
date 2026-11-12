@@ -1,4 +1,4 @@
-from typing import Any
+from typing_extensions import Any, Dict, List
 from pathlib import Path
 from langchain_text_splitters import RecursiveCharacterTextSplitter, Language
 from langchain_core.documents import Document
@@ -10,7 +10,7 @@ def perform_doc_chunking(
         language: str = "python",
         chunk_size: int = 2000,
         chunk_overlap: int = 15,
-        add_start_index: bool = True) -> list[Document]:
+        add_start_index: bool = True) -> List[Document]:
 
     if language.lower() == "python":
         doc_splitter = RecursiveCharacterTextSplitter.from_language(
@@ -34,7 +34,7 @@ def perform_doc_chunking(
             add_start_index=add_start_index
         )
 
-    metadatas: dict[Any, Any] = {"file_path": str(file_path)}
+    metadatas: Dict[Any, Any] = {"file_path": str(file_path)}
 
     chunks = doc_splitter.create_documents([file_contents], [metadatas])
 
@@ -43,7 +43,7 @@ def perform_doc_chunking(
     return chunks
 
 
-def get_end_index(chunks: list[Document]) -> list[Document]:
+def get_end_index(chunks: List[Document]) -> List[Document]:
 
     for chunk in chunks:
         excl_end_index = chunk.metadata["start_index"] + len(chunk.page_content)
