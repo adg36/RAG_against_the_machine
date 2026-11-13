@@ -4,11 +4,18 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter, Language
 from langchain_core.documents import Document
 
 
+def compute_chunk_overlap(max_chunk_size: int) -> int:
+    if max_chunk_size / 6 > 15:
+        return 15
+    else:
+        return max_chunk_size // 6
+
+
 def perform_doc_chunking(
         file_contents: str,
         file_path: Path,
         language: str = "python",
-        chunk_size: int = 200,
+        chunk_size: int = 2000,
         chunk_overlap: int = 15,
         add_start_index: bool = True) -> List[Document]:
 
@@ -46,6 +53,7 @@ def perform_doc_chunking(
 def get_end_index(chunks: List[Document]) -> List[Document]:
 
     for chunk in chunks:
-        excl_end_index = chunk.metadata["start_index"] + len(chunk.page_content)
+        excl_end_index = (
+            chunk.metadata["start_index"] + len(chunk.page_content))
         chunk.metadata["excl_end_index"] = excl_end_index
     return chunks

@@ -1,6 +1,7 @@
 import fire
 import sys
 from typing_extensions import Any, Dict
+from .exceptions import RagError
 from .indexing import index
 
 
@@ -33,6 +34,7 @@ def answer_dataset(student_search_results_path: str, save_directory: str) -> Non
 def evaluate(student_search_results_path: str, dataset_path: str) -> None:
     pass
 
+
 if __name__ == "__main__":
     commands: Dict[str, Any] = {
         "index": index,
@@ -45,5 +47,6 @@ if __name__ == "__main__":
 
     try:
         fire.Fire(component=commands)
-    except (ValueError, TypeError) as e:
+    except RagError as e:
         print(f"ERROR: {e}")
+        sys.exit(1)

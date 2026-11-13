@@ -39,12 +39,12 @@ def test_sample_chunks():
         doc, score = results[0, i], scores[0, i]
         print(f"Rank {i+1} (score: {score:.2f}): {doc}")
 
-    retriever.save("fake_chunks_index", corpus=all_chunks)
+    retriever.save("fake_chunks_index")
 
     assert "memory" in results[0, 0] or "Memory" in results[0, 0], "Top result was not the memory chunk"
     assert scores[0, 0] > scores[0, 1] and scores[0, 0] > scores[0, 2], "Top result was not the highest score"
 
-    reloaded_retriever = bm25s.BM25.load("fake_chunks_index", load_corpus=True)
+    reloaded_retriever = bm25s.BM25.load("fake_chunks_index")
 
     results2, scores2 = reloaded_retriever.retrieve(query_tokens, corpus=all_chunks, k=3)
 

@@ -3,7 +3,8 @@ from pathlib import Path
 from tqdm import tqdm
 from langchain_core.documents import Document
 from typing_extensions import List
-from .chunking import perform_doc_chunking
+from .chunking import compute_chunk_overlap, perform_doc_chunking
+from .exceptions import ParseError
 from .tokenizer import tokenize
 
 
@@ -15,19 +16,35 @@ def get_filepaths(corpus: Path) -> List[Path]:
     all_filepaths: List[Path] = []
     all_filepaths.extend(list(corpus.rglob("*.py")))
     all_filepaths.extend(list(corpus.rglob("*.md")))
+    all_filepaths.extend(list(corpus.rglob("*.txt")))
 
     return all_filepaths
 
 
-def index(max_chunk_size: int) -> None:
+def is_input_valid(max_chunk_size: int) -> bool:
+    if not isinstance(max_chunk_size, int):
+        return False
+    if isinstance(max_chunk_size, bool):
+        return False
 
     try:
-        if max_chunk_size <= 0:
-            raise ValueError("max_chunk_size must be greater than zero.")
-        elif max_chunk_size > 2000:
-            raise ValueError("max_chunk_size cannot be greater than 2000.")
-    except TypeError:
-        print("ERROR: max_chunk_size must be an integer between 1 and 2000.")
+        int(max_chunk_size)
+    except ValueError:
+        return False
+
+    if max_chunk_size <= 0:
+        return False
+    elif max_chunk_size > 2000:
+        return False
+    return True
+
+
+def index(max_chunk_size: int) -> None:
+
+    if not is_input_valid(max_chunk_size):
+        raise ParseError("max_chunk_size must be an int between 1 and 2000")
+
+    chunk_overlap = compute_chunk_overlap(max_chunk_size)
 
     all_filepaths = get_filepaths(corpus)
 
@@ -41,13 +58,13 @@ def index(max_chunk_size: int) -> None:
         text = filepath.read_text()
         if filepath.name.endswith(".py"):
             chunks = perform_doc_chunking(
-                text, filepath, "python", max_chunk_size)
+                text, filepath, "python", max_chunk_size, chunk_overlap)
         elif filepath.name.endswith(".md"):
             chunks = perform_doc_chunking(
-                text, filepath, "markdown", max_chunk_size)
+                text, filepath, "markdown", max_chunk_size, chunk_overlap)
         else:
             chunks = perform_doc_chunking(
-                text, filepath)
+                text, filepath, "markdown", max_chunk_size, chunk_overlap)
         collection.extend(chunks)
         t.update(1)
     t.close()
@@ -69,11 +86,8 @@ def index(max_chunk_size: int) -> None:
     retriever = bm25s.BM25()
     retriever.index(tokenized_collection)
 
-    # Save index only
+    # Save index
     retriever.save(output_dir)
-
-    # Save index with corpus
-    retriever.save(output_dir, corpus=corpus)
     print(
         f"Ingestion complete! Indexed {len(collection)}"
         f" chunks under {output_dir}.")
