@@ -24,6 +24,7 @@ https://www.meilisearch.com/blog/rag-indexing
 
 	- Lexical search
 		- https://huggingface.co/blog/xhluca/bm25s
+		- https://pypi.org/project/bm25s/0.1.5/
 
 * Progress bars
 
