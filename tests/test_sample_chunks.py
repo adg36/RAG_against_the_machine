@@ -1,6 +1,7 @@
 from src.chunking import perform_doc_chunking
 from pathlib import Path
 
+
 def test_sample_chunks():
 
     corpus = Path("tests/fixtures")

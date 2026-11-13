@@ -1,3 +1,4 @@
+import bm25s
 from pathlib import Path
 from tqdm import tqdm
 from langchain_core.documents import Document
@@ -7,6 +8,7 @@ from .tokenizer import tokenize
 
 
 corpus = Path("data/raw")
+
 
 def get_filepaths(corpus: Path) -> List[Path]:
 
@@ -31,7 +33,9 @@ def index(max_chunk_size: int) -> None:
 
     collection: List[Document] = []
 
-    t = tqdm(bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}", desc=f"{'Chunking:':<12}", total=len(all_filepaths), unit=" file")
+    t = tqdm(
+        bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
+        desc=f"{'Chunking:':<12}", total=len(all_filepaths), unit=" file")
 
     for filepath in all_filepaths:
         text = filepath.read_text()
@@ -48,9 +52,28 @@ def index(max_chunk_size: int) -> None:
         t.update(1)
     t.close()
 
-    tokenized_collection = tokenize(collection)
+    tokenized_collection: List[List[str]] = []
 
-    # bm25 = BM25Okapi(tokenized_collection)
+    t = tqdm(
+            bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
+            desc=f"{'Tokenizing:':<12}", total=len(collection), unit=" chunk")
 
-    # print(f"Created collection of {len(collection)} documents")
-    # print(f"Example of one chunk: {collection[0]}. Chunk length: {len(collection[0].page_content)}")
+    for doc in collection:
+        chunk = doc.page_content
+        tokenized_chunk = tokenize(chunk)
+        tokenized_collection.append(tokenized_chunk)
+        t.update(1)
+    t.close()
+
+    output_dir = "data/processed/"
+    retriever = bm25s.BM25()
+    retriever.index(tokenized_collection)
+
+    # Save index only
+    retriever.save(output_dir)
+
+    # Save index with corpus
+    retriever.save(output_dir, corpus=corpus)
+    print(
+        f"Ingestion complete! Indexed {len(collection)}"
+        f" chunks under {output_dir}.")

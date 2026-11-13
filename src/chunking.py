@@ -8,7 +8,7 @@ def perform_doc_chunking(
         file_contents: str,
         file_path: Path,
         language: str = "python",
-        chunk_size: int = 2000,
+        chunk_size: int = 200,
         chunk_overlap: int = 15,
         add_start_index: bool = True) -> List[Document]:
 
