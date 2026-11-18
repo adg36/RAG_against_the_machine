@@ -3,8 +3,8 @@ from pathlib import Path
 from tqdm import tqdm
 from langchain_core.documents import Document
 from typing_extensions import List
+from .arg_validation import validate_int_input
 from .chunking import compute_chunk_overlap, perform_doc_chunking
-from .exceptions import ParseError
 from .tokenizer import tokenize
 
 
@@ -21,22 +21,9 @@ def get_filepaths(corpus: Path) -> List[Path]:
     return all_filepaths
 
 
-def _validate_int_input(input: int) -> bool:
-    if not isinstance(input, int):
-        raise ParseError(f"max_chunk_size must be an integer. Got '{input}' ({type(input).__name__})")
-    if isinstance(input, bool):
-        raise ParseError(f"max_chunk_size must be an integer. Got '{input}' ({type(input).__name__})")
-
-    if input <= 0:
-        raise ParseError(f"max_chunk_size must be an integer between 1 and 2000. Got {input}")
-    elif input > 2000:
-        raise ParseError(f"max_chunk_size must be an integer between 1 and 2000. Got {input}")
-
-
 def index(max_chunk_size: int) -> None:
 
-    if not _validate_int_input(max_chunk_size):
-        raise ParseError
+    validate_int_input(max_chunk_size, name="max_chunk_size")
 
     chunk_overlap = compute_chunk_overlap(max_chunk_size)
 

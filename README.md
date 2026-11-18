@@ -12,7 +12,7 @@
 		- Python Fire: https://google.github.io/python-fire/guide/
 		- Langchain
 		- tqdm
-		- BM25
+		- BM25: https://github.com/xhluca/bm25s
 
 * Indexing
 https://www.meilisearch.com/blog/rag-indexing

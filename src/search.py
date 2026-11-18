@@ -1,38 +1,41 @@
-
 import bm25s
+import os
+from .arg_validation import validate_int_input
+from .exceptions import LoadingError, ParseError
 from .tokenizer import tokenize
-from .exceptions import ParseError
-
-def _is_input_valid(query: str, k: int) -> bool:
-    if not isinstance(k, int):
-        return False
-    if isinstance(k, bool):
-        return False
-
-    try:
-        int(k)
-    except ValueError:
-        return False
-
-    if k <= 0:
-        return False
-
-    if not query:
-        return False
-    return True
 
 
 def search(query: str, k: int) -> None:
-    if not _is_input_valid(query, k):
-        raise ParseError("Invalid argument(s). The query must be a valid question and k must be a positive integer.")
 
-    print(f"Query: {query}\nk: {k}")
+    validate_int_input(k, name="k")
+    if not query:
+        raise ParseError("Invalid argument. The query must be a valid question.")
 
-    reloaded_retriever = bm25s.BM25.load("data/processed/", load_corpus=True)
+    if not os.path.exists("data/processed/"):
+        raise LoadingError("Unable to find data/processed/ directory. Run the index command first.")
+    try:
+        reloaded_retriever = bm25s.BM25.load("data/processed/", load_corpus=True)
+    except FileNotFoundError:
+        raise LoadingError("No index found in data/processed/. Run the command index again.")
+    except PermissionError:
+        raise LoadingError("Index file does not have the required permissions.")
+    if reloaded_retriever.corpus is None:
+        raise LoadingError("The index in data/processed/ has no chunk data. Run the command index again.")
+
+    if k > len(reloaded_retriever.corpus):
+        k = len(reloaded_retriever.corpus)
+
     query_tokens = [tokenize(query)]
+
+    if len(query_tokens) == 0:
+        raise ParseError("Invalid query.")
 
     results, scores = reloaded_retriever.retrieve(query_tokens, k=k)
 
     for i in range(results.shape[1]):
-        doc, _ = results[0, i], scores[0, i]
+        doc, score = results[0, i], scores[0, i]
+        if i == 0 and score == 0:
+            raise ParseError("Invalid query.")
+        elif i != 0 and score == 0:
+            continue    # NOT TO BE SAVED AS MINIMALSOURCE OBJECTS
         print(f"{doc['path']} [{doc['first_character_index']}:{doc['last_character_index']}]")

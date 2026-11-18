@@ -19,3 +19,7 @@ class RagError(Exception):
 
 class ParseError(RagError):
     """Raised when the input is invalid."""
+
+
+class LoadingError(RagError):
+    """Raised when the input file is invalid."""
