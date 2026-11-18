@@ -78,4 +78,4 @@ def index(max_chunk_size: int) -> None:
 
     print(
         f"Ingestion complete! Indexed {len(collection)}"
-        f" chunks under {output_dir}.")
+        f" chunks under {output_dir}")

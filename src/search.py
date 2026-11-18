@@ -2,6 +2,7 @@ import bm25s
 import os
 from .arg_validation import validate_int_input
 from .exceptions import LoadingError, ParseError
+from .models import MinimalSource
 from .tokenizer import tokenize
 
 
@@ -36,6 +37,4 @@ def search(query: str, k: int) -> None:
         doc, score = results[0, i], scores[0, i]
         if i == 0 and score == 0:
             raise ParseError("Invalid query.")
-        elif i != 0 and score == 0:
-            continue    # NOT TO BE SAVED AS MINIMALSOURCE OBJECTS
         print(f"{doc['path']} [{doc['first_character_index']}:{doc['last_character_index']}]")

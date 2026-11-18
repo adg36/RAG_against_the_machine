@@ -27,7 +27,6 @@ https://www.meilisearch.com/blog/rag-indexing
 		- https://pypi.org/project/bm25s/0.1.5/
 
 * Progress bars
-
 	- https://www.youtube.com/watch?v=LurXhBQHwHM - tqdm
 
 * Tokenizer
