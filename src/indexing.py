@@ -21,28 +21,22 @@ def get_filepaths(corpus: Path) -> List[Path]:
     return all_filepaths
 
 
-def _is_chunk_size_valid(max_chunk_size: int) -> bool:
-    if not isinstance(max_chunk_size, int):
-        return False
-    if isinstance(max_chunk_size, bool):
-        return False
+def _validate_int_input(input: int) -> bool:
+    if not isinstance(input, int):
+        raise ParseError(f"max_chunk_size must be an integer. Got '{input}' ({type(input).__name__})")
+    if isinstance(input, bool):
+        raise ParseError(f"max_chunk_size must be an integer. Got '{input}' ({type(input).__name__})")
 
-    try:
-        int(max_chunk_size)
-    except ValueError:
-        return False
-
-    if max_chunk_size <= 0:
-        return False
-    elif max_chunk_size > 2000:
-        return False
-    return True
+    if input <= 0:
+        raise ParseError(f"max_chunk_size must be an integer between 1 and 2000. Got {input}")
+    elif input > 2000:
+        raise ParseError(f"max_chunk_size must be an integer between 1 and 2000. Got {input}")
 
 
 def index(max_chunk_size: int) -> None:
 
-    if not _is_chunk_size_valid(max_chunk_size):
-        raise ParseError("max_chunk_size must be an int between 1 and 2000")
+    if not _validate_int_input(max_chunk_size):
+        raise ParseError
 
     chunk_overlap = compute_chunk_overlap(max_chunk_size)
 

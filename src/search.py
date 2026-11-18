@@ -34,5 +34,5 @@ def search(query: str, k: int) -> None:
     results, scores = reloaded_retriever.retrieve(query_tokens, k=k)
 
     for i in range(results.shape[1]):
-        doc, score = results[0, i], scores[0, i]
+        doc, _ = results[0, i], scores[0, i]
         print(f"{doc['path']} [{doc['first_character_index']}:{doc['last_character_index']}]")
