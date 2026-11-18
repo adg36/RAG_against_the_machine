@@ -21,7 +21,7 @@ def get_filepaths(corpus: Path) -> List[Path]:
     return all_filepaths
 
 
-def is_input_valid(max_chunk_size: int) -> bool:
+def _is_chunk_size_valid(max_chunk_size: int) -> bool:
     if not isinstance(max_chunk_size, int):
         return False
     if isinstance(max_chunk_size, bool):
@@ -41,7 +41,7 @@ def is_input_valid(max_chunk_size: int) -> bool:
 
 def index(max_chunk_size: int) -> None:
 
-    if not is_input_valid(max_chunk_size):
+    if not _is_chunk_size_valid(max_chunk_size):
         raise ParseError("max_chunk_size must be an int between 1 and 2000")
 
     chunk_overlap = compute_chunk_overlap(max_chunk_size)
@@ -82,12 +82,19 @@ def index(max_chunk_size: int) -> None:
         t.update(1)
     t.close()
 
+    chunk_store = [
+        {"path": doc.metadata["file_path"],
+         "first_character_index": doc.metadata["start_index"],
+         "last_character_index": doc.metadata["excl_end_index"]
+        } for doc in collection]
+
     output_dir = "data/processed/"
-    retriever = bm25s.BM25()
+    retriever = bm25s.BM25(corpus=chunk_store)
     retriever.index(tokenized_collection)
 
     # Save index
-    retriever.save(output_dir)
+    retriever.save(output_dir, corpus=chunk_store)
+
     print(
         f"Ingestion complete! Indexed {len(collection)}"
         f" chunks under {output_dir}.")

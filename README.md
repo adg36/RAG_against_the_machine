@@ -9,7 +9,7 @@
 ## Resources
 * Libraries
 		- Pathlib: https://docs.python.org/3/library/pathlib.html
-		- Python Fire:
+		- Python Fire: https://google.github.io/python-fire/guide/
 		- Langchain
 		- tqdm
 		- BM25

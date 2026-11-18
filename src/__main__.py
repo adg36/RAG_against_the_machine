@@ -3,22 +3,10 @@ import sys
 from typing_extensions import Any, Dict
 from .exceptions import RagError
 from .indexing import index
+from .search import search
 
 
 # FIRE COMMANDS
-def search(query: str, k: int) -> None:
-    try:
-        if not query:
-            print("Empty query.")
-            sys.exit(1)
-        elif k <= 0:
-            print("k must be a positive integer.")
-            sys.exit(1)
-    except TypeError:
-        print("ERROR: k must be a positive integer.")
-    print(f"Query: {query}\nk: {k}")
-
-
 def search_dataset(dataset_path: str, k: int, save_directory: str) -> None:
     pass
 
