@@ -4,13 +4,10 @@ from typing_extensions import Any, Dict
 from .exceptions import RagError
 from .indexing import index
 from .search import search
+from .search_dataset import search_dataset
 
 
 # FIRE COMMANDS
-def search_dataset(dataset_path: str, k: int, save_directory: str) -> None:
-    pass
-
-
 def answer(query: str, k: int) -> None:
     pass
 
