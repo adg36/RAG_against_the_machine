@@ -1,10 +1,11 @@
 import bm25s
 import os
+from typing_extensions import List
 from tqdm import tqdm
 from .arg_validation import validate_int_input
 from .exceptions import LoadingError, ParseError
 from .loader import load_rag_dataset
-from .models import MinimalSearchResults, MinimalSource
+from .models import MinimalSearchResults, MinimalSource, StudentSearchResults
 from .tokenizer import tokenize
 
 
@@ -66,33 +67,46 @@ def search_dataset(dataset_path: str, k: int, save_directory: str) -> None:
     t = tqdm(
             bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
             desc=f"{'Searching:':<12}", total=len(dataset.rag_questions),
-            unit=" questions")
+            unit=" question")
 
-    search_results = []
+    search_results: List[MinimalSearchResults] = []
 
     for item in dataset.rag_questions:
         query = item.question
-        print("Query: ", query)
-        retrieved_sources = []
-        search_result = MinimalSearchResults(item.question_id, item.question, retrieved_sources)
+        print("\nQuery: ", query)
+        retrieved_sources: List[MinimalSource] = []
+        search_result = MinimalSearchResults(
+            question_id=item.question_id,
+            question=item.question,
+            retrieved_sources=retrieved_sources)
         query_tokens = [tokenize(query)]
-        if len(query_tokens) == 0:
+        # if len(query_tokens) == 0:
             # decide what to do for an empty question
         results, scores = loaded_index.retrieve(query_tokens, k=k)
         for i in range(results.shape[1]):
             doc, score = results[0, i], scores[0, i]
-            if i == 0 and score == 0:
+            # if i == 0 and score == 0:
                 # decide what to do if the first result has score 0
+            # else:
             minimal_source = MinimalSource(
-                doc['path'],
-                doc['first_character_index'],
-                doc['last_character_index']
+                file_path=doc['path'],
+                first_character_index=doc['first_character_index'],
+                last_character_index=doc['last_character_index']
             )
             retrieved_sources.append(minimal_source)
-        
+        search_results.append(search_result)
         t.update(1)
     t.close()
 
-    print(f"Saved student_search_results to {save_directory}")
+    output_file = StudentSearchResults(search_results=search_results, k=k)
 
-    # write a StudentSearchResults JSON file, validated with pydantic
+    # Create path to save_directory with Path mkdir
+    # build the filepath
+
+    try:
+        with open(save_directory, "w") as f:
+            output_file.model_dump_json()
+    except PermissionError as e:
+        raise LoadingError("Cannot write to output file.") from e
+
+    print(f"Saved student_search_results to {save_directory}")
