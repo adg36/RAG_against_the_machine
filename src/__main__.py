@@ -3,8 +3,7 @@ import sys
 from typing_extensions import Any, Dict
 from .exceptions import RagError
 from .indexing import index
-from .search import search
-from .search_dataset import search_dataset
+from .search import search, search_dataset
 
 
 # FIRE COMMANDS
