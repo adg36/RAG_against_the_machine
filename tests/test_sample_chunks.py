@@ -1,4 +1,4 @@
-from src.chunking import perform_doc_chunking
+from src.chunk import perform_doc_chunking
 from pathlib import Path
 
 

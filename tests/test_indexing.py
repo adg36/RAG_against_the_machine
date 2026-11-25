@@ -1,6 +1,6 @@
 import bm25s
 from src.tokenizer import tokenize
-from src.chunking import perform_doc_chunking
+from src.chunk import perform_doc_chunking
 from pathlib import Path
 from langchain_core.documents import Document
 from typing_extensions import List

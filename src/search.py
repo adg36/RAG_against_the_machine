@@ -1,5 +1,6 @@
 import bm25s
 import os
+from pathlib import Path
 from typing_extensions import List
 from tqdm import tqdm
 from .arg_validation import validate_int_input
@@ -60,28 +61,28 @@ def search_dataset(dataset_path: str, k: int, save_directory: str) -> None:
     validate_int_input(k, name="k")
     dataset = load_rag_dataset(dataset_path)
     loaded_index = load_index()
+    output_dir = Path(save_directory)
+    try:
+        output_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        print(f"Error: path invalid or general system I/O error.")
+        raise LoadingError #FILL IN THE REST
+    filename = Path(dataset_path).name
 
     if k > len(loaded_index.corpus):
         k = len(loaded_index.corpus)
 
-    t = tqdm(
-            bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
-            desc=f"{'Searching:':<12}", total=len(dataset.rag_questions),
-            unit=" question")
-
     search_results: List[MinimalSearchResults] = []
 
-    for item in dataset.rag_questions:
+    for item in tqdm(dataset.rag_questions,
+                     bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
+                     desc=f"{'Searching:':<12}",
+                     unit=" question"):
         query = item.question
-        print("\nQuery: ", query)
-        retrieved_sources: List[MinimalSource] = []
-        search_result = MinimalSearchResults(
-            question_id=item.question_id,
-            question=item.question,
-            retrieved_sources=retrieved_sources)
         query_tokens = [tokenize(query)]
         # if len(query_tokens) == 0:
             # decide what to do for an empty question
+        retrieved_sources: List[MinimalSource] = []
         results, scores = loaded_index.retrieve(query_tokens, k=k)
         for i in range(results.shape[1]):
             doc, score = results[0, i], scores[0, i]
@@ -94,19 +95,18 @@ def search_dataset(dataset_path: str, k: int, save_directory: str) -> None:
                 last_character_index=doc['last_character_index']
             )
             retrieved_sources.append(minimal_source)
+        search_result = MinimalSearchResults(
+            question_id=item.question_id,
+            question=item.question,
+            retrieved_sources=retrieved_sources)
         search_results.append(search_result)
-        t.update(1)
-    t.close()
 
-    output_file = StudentSearchResults(search_results=search_results, k=k)
-
-    # Create path to save_directory with Path mkdir
-    # build the filepath
-
+    output_text = StudentSearchResults(search_results=search_results, k=k)
+    filepath = output_dir / filename
+    json_text = output_text.model_dump_json(indent=2)
     try:
-        with open(save_directory, "w") as f:
-            output_file.model_dump_json()
+        filepath.write_text(json_text)
     except PermissionError as e:
         raise LoadingError("Cannot write to output file.") from e
 
-    print(f"Saved student_search_results to {save_directory}")
+    print(f"Saved student_search_results to {filepath}")

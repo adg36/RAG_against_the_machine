@@ -4,7 +4,7 @@ from tqdm import tqdm
 from langchain_core.documents import Document
 from typing_extensions import List
 from .arg_validation import validate_int_input
-from .chunking import compute_chunk_overlap, perform_doc_chunking
+from .chunk import compute_chunk_overlap, perform_doc_chunking
 from .tokenizer import tokenize
 
 
@@ -52,22 +52,18 @@ def index(max_chunk_size: int) -> None:
 
     tokenized_collection: List[List[str]] = []
 
-    t = tqdm(
-            bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
-            desc=f"{'Tokenizing:':<12}", total=len(collection), unit=" chunk")
-
-    for doc in collection:
+    for doc in tqdm(collection,
+                    bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
+                    desc=f"{'Tokenizing:':<12}", unit=" chunk"):
         chunk = doc.page_content
         tokenized_chunk = tokenize(chunk)
         tokenized_collection.append(tokenized_chunk)
-        t.update(1)
-    t.close()
 
     chunk_store = [
         {"path": doc.metadata["file_path"],
          "first_character_index": doc.metadata["start_index"],
          "last_character_index": doc.metadata["excl_end_index"]
-        } for doc in collection]
+         } for doc in collection]
 
     output_dir = "data/processed/"
     retriever = bm25s.BM25(corpus=chunk_store)

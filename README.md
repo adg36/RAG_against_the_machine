@@ -8,7 +8,7 @@
 
 ## Resources
 * Libraries
-		- Pathlib: https://docs.python.org/3/library/pathlib.html
+		- Pathlib: https://docs.python.org/3/library/pathlib.html, https://www.tradingcode.net/python/pathlib-path-mkdir-method/
 		- Python Fire: https://google.github.io/python-fire/guide/
 		- Langchain
 		- tqdm

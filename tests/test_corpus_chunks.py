@@ -1,5 +1,5 @@
-from src.chunking import perform_doc_chunking
-from src.indexing import get_filepaths
+from src.chunk import perform_doc_chunking
+from src.index import get_filepaths
 from pathlib import Path
 
 

@@ -1,8 +1,9 @@
 import fire
 import sys
 from typing_extensions import Any, Dict
+from .evaluate import evaluate
 from .exceptions import RagError
-from .indexing import index
+from .index import index
 from .search import search, search_dataset
 
 
@@ -12,10 +13,6 @@ def answer(query: str, k: int) -> None:
 
 
 def answer_dataset(student_search_results_path: str, save_directory: str) -> None:
-    pass
-
-
-def evaluate(student_search_results_path: str, dataset_path: str) -> None:
     pass
 
 
