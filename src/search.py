@@ -77,7 +77,7 @@ def search_dataset(dataset_path: str, k: int, save_directory: str) -> None:
     for item in tqdm(dataset.rag_questions,
                      bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
                      desc=f"{'Searching:':<12}",
-                     unit=" question"):
+                     unit=" questions"):
         query = item.question
         query_tokens = [tokenize(query)]
         # if len(query_tokens) == 0:

@@ -1,23 +1,6 @@
 import pytest
+from src.evaluate import compute_iou
 from src.models import MinimalSource
-
-
-def compute_iou(retrieved_source: MinimalSource, ground_truth: MinimalSource) -> float:
-
-    r_start = retrieved_source.first_character_index
-    r_end = retrieved_source.last_character_index
-    g_start = ground_truth.first_character_index
-    g_end = ground_truth.last_character_index
-
-    begin_intersection = max(r_start, g_start)
-    end_intersection = min(r_end, g_end)
-    intersection = end_intersection - begin_intersection
-    if intersection < 0:
-        intersection = 0
-
-    union = ((r_end - r_start) + (g_end - g_start)) - intersection
-
-    return intersection / union if union > 0 else 0.0
 
 
 @pytest.mark.parametrize("r_start, r_end, g_start, g_end, expected", [

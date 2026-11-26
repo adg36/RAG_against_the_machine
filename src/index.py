@@ -33,7 +33,7 @@ def index(max_chunk_size: int) -> None:
 
     t = tqdm(
         bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
-        desc=f"{'Chunking:':<12}", total=len(all_filepaths), unit=" file")
+        desc=f"{'Chunking:':<12}", total=len(all_filepaths), unit=" files")
 
     for filepath in all_filepaths:
         text = filepath.read_text()
@@ -54,7 +54,7 @@ def index(max_chunk_size: int) -> None:
 
     for doc in tqdm(collection,
                     bar_format="{desc}{percentage:3.0f}%|{bar:30}{r_bar}",
-                    desc=f"{'Tokenizing:':<12}", unit=" chunk"):
+                    desc=f"{'Tokenizing:':<12}", unit=" chunks"):
         chunk = doc.page_content
         tokenized_chunk = tokenize(chunk)
         tokenized_collection.append(tokenized_chunk)
