@@ -5,7 +5,8 @@ from .exceptions import LoadingError, ParseError
 from .models import MinimalSource, RagDataset, StudentSearchResults
 
 
-def evaluate(student_search_results_path: str, dataset_path: str) -> float:
+def evaluate(student_search_results_path: str, dataset_path: str) -> None:
+
     sr_path = Path(student_search_results_path)
     ds_path = Path(dataset_path)
 
@@ -29,9 +30,12 @@ def evaluate(student_search_results_path: str, dataset_path: str) -> float:
         validated_results = StudentSearchResults.model_validate_json(results_json)
         validated_dataset = RagDataset.model_validate_json(dataset_json)
     except ValidationError as e:
+        print("Student data is valid: False")
         raise ParseError(
             "Unable to validate JSON file against the pydantic models."
         )
+    else:
+        print("Student data is valid: True")
 
     relevant_items = 0
 
@@ -45,17 +49,13 @@ def evaluate(student_search_results_path: str, dataset_path: str) -> float:
                     iou = compute_iou(source, validated_dataset.rag_questions[i].sources[0])
                     if iou > max_iou:
                         max_iou = iou
-                        print("max IoU: ", max_iou)
             if max_iou > 0.05:
                 relevant_items += 1
-    print("Relevant items: ", relevant_items)
     recall = relevant_items / len(validated_dataset.rag_questions) * 100
-    print(f"Recall@{validated_results.k}: {recall}%")
-    return recall
-
-
-
-
+    print("Evaluation Results\n"
+          "=========================================\n"
+          f"Recall@{validated_results.k}: {recall:.3f}")
+            # MAYBE PRESENT ALL K VALUES UNTIL THE K IN THE STUDENT SEARCH RESULT DOC
 
 
 def compute_iou(retrieved_source: MinimalSource, ground_truth: MinimalSource) -> float:

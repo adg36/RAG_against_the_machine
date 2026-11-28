@@ -1,6 +1,7 @@
 import fire
 import sys
 from typing_extensions import Any, Dict
+from .answer import answer
 from .evaluate import evaluate
 from .exceptions import RagError
 from .index import index
@@ -8,10 +9,6 @@ from .search import search, search_dataset
 
 
 # FIRE COMMANDS
-def answer(query: str, k: int) -> None:
-    pass
-
-
 def answer_dataset(student_search_results_path: str, save_directory: str) -> None:
     pass
 

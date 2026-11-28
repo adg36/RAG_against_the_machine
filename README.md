@@ -35,6 +35,11 @@ https://www.meilisearch.com/blog/rag-indexing
 	- https://stackoverflow.com/questions/10182664/check-for-camel-case-in-python
 	- https://www.geeksforgeeks.org/python/python-split-camelcase-string-to-individual-strings/
 
+* Answer
+	- https://docs.astral.sh/uv/guides/integration/pytorch/
+	- https://huggingface.co/Qwen/Qwen3-0.6B
+
+
 ### System architecture
 
 ### Chunking strategy
